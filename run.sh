@@ -51,5 +51,6 @@ else
 fi
 
 # 3/ run docker compose
+export OPEN_OCR_INSTANCE=$OPEN_OCR_INSTANCE_NAME
 
-docker-compose up -e OPEN_OCR=$OPEN_OCR_INSTANCE_NAME
+docker-compose up
