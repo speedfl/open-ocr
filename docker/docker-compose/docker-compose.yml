@@ -13,7 +13,7 @@ services:
 
   # Start transformation worker
   strokewidthtransform:
-    image: tleyden5iwx/open-ocr-preprocessor
+    image: open-ocr-preprocessor
     volumes:
       - ./scripts/:/opt/open-ocr/
     dns: ["8.8.8.8"]
@@ -23,7 +23,7 @@ services:
 
   # Start OCR worker
   openocrworker:
-    image: tleyden5iwx/open-ocr
+    image: ${OPEN_OCR}
     volumes:
       - ./scripts/:/opt/open-ocr/
     dns: ["8.8.8.8"]
@@ -33,7 +33,7 @@ services:
 
   # Start http server
   openocr:
-    image: tleyden5iwx/open-ocr
+    image: ${OPEN_OCR}
     volumes:
       - ./scripts/:/opt/open-ocr/
     ports:
