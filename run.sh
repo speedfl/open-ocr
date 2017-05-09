@@ -1,12 +1,12 @@
 #!/bin/sh
 
-OPEN_OCR_VERSION=$1
+echo
+echo "Which version of the OCR do you want to deploy: "
+echo "[1] V1 (using tesseract 3.X): low memory consumption, faster but result less precise"
+echo "[2] V2 (using tesseract 4.X): High accuracy but slower and moderate to high memory consumption"
+echo
 
-if [ -z $OPEN_OCR_VERSION ]
-then
-	echo "Open ocr version is missing apply latest (2)"
-	OPEN_OCR_VERSION="2"
-fi
+read -p "Choose 1 or 2: " OPEN_OCR_VERSION
 
 OPEN_OCR_INSTANCE_NAME=""
 
@@ -24,15 +24,16 @@ else
 	exit
 fi
 
-STATUS_OK="Status ok"
-
 # 1/ build docker image for open-ocr
 cd docker/$OPEN_OCR_INSTANCE_NAME
 docker build -t $OPEN_OCR_INSTANCE_NAME .
 
-if docker run $OPEN_OCR_INSTANCE_NAME echo $STATUS_OK | grep -q $STATUS_OK; then
-	echo "Instance $OPEN_OCR_INSTANCE_NAME is up and running"
+#check that docker instance answer to a simple command
+RESULT_OK=$(docker run $OPEN_OCR_INSTANCE_NAME echo "Status ok" | grep "Status ok")
 
+if [ -z $RESULT_OK ]
+then
+	echo "Instance $OPEN_OCR_INSTANCE_NAME is up and running"
 else
 	echo "ERROR: Build instance $OPEN_OCR_INSTANCE_NAME failed"
 fi
@@ -41,10 +42,13 @@ fi
 cd ../open-ocr-preprocessor
 docker build -t open-ocr-preprocessor .
 
-if docker run open-ocr-preprocessor echo $STATUS_OK | grep -q $STATUS_OK; then
+#check that docker instance answer to a simple command
+RESULT_OK=$(docker run open-ocr-preprocessor echo "Status ok" | grep "Status ok")
+
+if [ -z $RESULT_OK ]
+then
 	echo "Instance open-ocr-preprocessor is up and running"
 	exit
-	
 else
 	echo "ERROR: Build instance open-ocr-preprocessor failed"
 	exit
