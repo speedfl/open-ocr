@@ -42,7 +42,7 @@ runInstance()
 	INSTANCE_NAME=$1
 	echo "About to build $INSTANCE_NAME"
 	
-	cd docker/$INSTANCE_NAME
+	cd $INSTANCE_NAME
 	docker build -t $INSTANCE_NAME .
 	
 	#check that docker instance answer to a simple command
@@ -51,7 +51,6 @@ runInstance()
 	if [ "$RESULT_OK" == "Status ok" ]
 	then
 		echo "Instance $INSTANCE_NAME is up and running"
-		exit
 	else
 		echo "ERROR: Build instance $INSTANCE_NAME failed"
 		exit
