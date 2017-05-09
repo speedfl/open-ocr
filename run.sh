@@ -1,17 +1,52 @@
 #!/bin/bash
 
+# first remove all the docker container and docker images related to the project
+
+echo
+echo "Removing all previous instance"
+echo
+
+DOCKER_CONTAINER=$(docker ps -a -q)
+
+if [ "$DOCKER_CONTAINER" != "" ]
+then
+	echo "Cleaning all docker container"
+	docker rm $DOCKER_CONTAINER
+fi
+
+OPEN_OCR_1=$(docker images | grep "open-ocr-1")
+if [ "$OPEN_OCR_1" != "" ]
+then
+	echo "Cleaning open-ocr-1 image"
+	docker rmi "open-ocr-1"
+fi
+
+OPEN_OCR_2=$(docker images | grep "open-ocr-2")
+if [ "$OPEN_OCR_2" != "" ]
+then
+	echo "Cleaning open-ocr-2 image"
+	docker rmi "open-ocr-2"
+fi
+
+UBUNTU=$(docker images | grep "ubuntu")
+if [ "$UBUNTU" != "" ]
+then
+	echo "Cleaning ubuntu image"
+	docker rmi "ubuntu"
+fi
+
+OPEN_OCR_PREPROCESSOR=$(docker images | grep "open-ocr-preprocessor")
+if [ "$OPEN_OCR_PREPROCESSOR" != "" ]
+then
+	echo "Cleaning open-ocr-preprocessor image"
+	docker rmi "open-ocr-preprocessor"
+fi
+
 echo
 echo "Which version of the OCR do you want to deploy: "
 echo "[1] V1 (using tesseract 3.X): low memory consumption, faster but result less precise"
 echo "[2] V2 (using tesseract 4.X): High accuracy but slower and moderate to high memory consumption"
 echo
-
-# first remove all the docker container and docker images related to the project
-docker rm $(docker ps -a -q)
-docker rmi open-ocr-1
-docker rmi open-ocr-2
-docker rmi ubuntu
-docker rmi open-ocr-preprocessor
 
 read -p "Choose 1 or 2: " OPEN_OCR_VERSION
 
@@ -21,11 +56,10 @@ if [ "$OPEN_OCR_VERSION" == "1" ]
 then
 	echo "Open ocr instance name will be open-ocr-1"
 	OPEN_OCR_INSTANCE_NAME="open-ocr-1"
-	
 elif [ "$OPEN_OCR_VERSION" == "2" ]
+then
 	echo "Open ocr instance name will be open-ocr-2"
 	OPEN_OCR_INSTANCE_NAME="open-ocr-2"
-
 else
 	echo "ERROR: No correct version specified (please choose between 1 and 2)"
 	exit
